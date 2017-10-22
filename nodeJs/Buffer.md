@@ -118,7 +118,7 @@ console.log(Buffer.concat([buff1,buff2]).toString());
 > 自己实现concat方法
 ``` javascript
 Buffer.myConcat = function (list, totalLength) {
-    // 1.先判断totalLength是否传递，如果传递用传的,没传递自己循环数组算一个总长
+    // 1.先判断totalLength是否传递，如果传递用传递的,没传递循环数组计算一个长度
     if(typeof totalLength === 'undefined') {
         totalLength = list.reduce((prev,next)=> prev + next.length,0);
     }
