@@ -1,0 +1,248 @@
+<!DOCTYPE html><html><head><title>Buffer 缓存区</title><meta charset='utf-8'><link href='https://dn-maxiang.qbox.me/res-min/themes/marxico.css' rel='stylesheet'><style>
+.note-content  {font-family: 'Helvetica Neue', Arial, 'Hiragino Sans GB', STHeiti, 'Microsoft YaHei', 'WenQuanYi Micro Hei', SimSun, Song, sans-serif;}
+
+</style></head><body><div id='preview-contents' class='note-content'>
+                        
+                    
+
+<div><div class="toc"><div class="toc">
+<ul>
+<li><ul>
+<li><a href="#buffer-缓存区">Buffer 缓存区</a><ul>
+<li><a href="#定义buffer">定义Buffer</a><ul>
+<li><a href="#1-new-buffersize">1.  new Buffer(size)</a></li>
+<li><a href="#2-new-bufferstring-encoding">2. new Buffer(string[, encoding])</a></li>
+<li><a href="#3-new-bufferarray">3. new Buffer(array)</a></li>
+</ul>
+</li>
+<li><a href="#isbuffer">isBuffer</a></li>
+<li><a href="#bytelength">byteLength</a></li>
+<li><a href="#slice">slice</a></li>
+<li><a href="#copy">copy</a></li>
+<li><a href="#concat">concat</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+<h2 id="buffer-缓存区">Buffer 缓存区</h2>
+
+<blockquote>
+  <p>JS语言本身只有字符串数据类型，没有二进制数据类型，而在处理TCP和文件流的时候，必须要处理二进制数据，</p>
+  
+  <p>在NodeJs中提供了<code>Buffe</code>r对象来操作二进制数据，是一个表示<code>固定内存分配</code>的全局对象（global.Buffer）</p>
+  
+  <p>Buffer好比由一个<code>八位字节组成的数组</code>，可以有效的表示二进制数据</p>
+  
+  <ul><li>node 中最小单位是字节，一个字节等于8位二进制的数</li>
+  <li>一个字节的最大值是11111111，用十进制表示是255（2的8次方 - 1）</li>
+  <li>parsetInt(string, radix) 方法可以将字符串按照指定数字的基数进行转换，当第一个字符串参数的前缀是<code>0X</code>或者 <code>0x</code> 时，parsetInt会将其解释为16进制，第二个参数可以指定转换的基数，合理的取值范围是2-36，例如： <code>parsetInt('1011',2)</code></li>
+  <li>将十进制的数字转换为16进制，可以使用toString方法，例如<code>(255).toString(16)</code></li>
+  </ul>
+  
+  <p>参考文档：<a href="http://nodejs.cn/api/buffer.html" target="_blank">http://nodejs.cn/api/buffer.html</a></p>
+</blockquote>
+
+
+
+<h3 id="定义buffer">定义Buffer</h3>
+
+
+
+<h4 id="1-new-buffersize">1.  new Buffer(size)</h4>
+
+<blockquote>
+  <p>创建一个指定长度的Buffer</p>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">var</span> buff = <span class="hljs-keyword">new</span> Buffer(<span class="hljs-number">3</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-built_in">console</span>.log(buff);
+</div></code></pre>
+
+
+
+<h4 id="2-new-bufferstring-encoding">2. new Buffer(string[, encoding])</h4>
+
+<blockquote>
+  <p>创建一个包含指定字符串的Buffer</p>
+  
+  <ul><li>encoding ：可选参数，字符串的编码格式，默认utf-8</li>
+  </ul>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">var</span> buff = <span class="hljs-keyword">new</span> Buffer(<span class="hljs-string">"buffer"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-built_in">console</span>.log(buff);
+</div></code></pre>
+
+
+
+<h4 id="3-new-bufferarray">3. new Buffer(array)</h4>
+
+<blockquote>
+  <p>创建一个指定八位字节数组的Buffer，数组里的数字必须在<code>0-255</code>之间</p>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="hljs pony"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">var</span> buff = <span class="hljs-function"><span class="hljs-keyword">new</span> <span class="hljs-title">Buffer</span>([<span class="hljs-number">0x16</span>,<span class="hljs-number">0x17</span>]);
+</span></div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-title">console</span>.<span class="hljs-title">log</span>(buff);
+</div></code></pre>
+
+
+
+<h3 id="isbuffer">isBuffer</h3>
+
+<p>语法：<strong><code>Buffer.isBuffer(obj)</code></strong> </p>
+
+<blockquote>
+  <p>判断一个对象是否是 Buffer，如果是一个 Buffer 则返回 true ，否则返回 false</p>
+  
+  <ul><li>obj：对象</li>
+  <li>返回值：布尔类型（true / false） </li>
+  </ul>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">var</span> buff = <span class="hljs-keyword">new</span> Buffer([<span class="hljs-number">0x16</span>,<span class="hljs-number">0x17</span>]);
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-built_in">console</span>.log(Buffer.isBuffer(buff));
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-built_in">console</span>.log(Buffer.isBuffer(<span class="hljs-string">'buff'</span>));
+</div></code></pre>
+
+
+
+<h3 id="bytelength">byteLength</h3>
+
+<p>语法：<strong><code>Buffer.byteLength(string[, encoding])</code></strong></p>
+
+<blockquote>
+  <p>获取一个字符串的字节长度，一个汉字是3个字节</p>
+  
+  <ul><li>string：要计算长度的字符串</li>
+  <li>encoding：字符串的编码格式，默认utf-8</li>
+  <li>返回值： string 包含的字节数</li>
+  </ul>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-built_in">console</span>.log(Buffer.byteLength(<span class="hljs-string">'啦啦啦'</span>)); <span class="hljs-comment">//一个汉字是3个字节，12</span>
+</div></code></pre>
+
+
+
+<h3 id="slice">slice</h3>
+
+<p>语法：<strong><code>buf.slice([start[, end]])</code></strong></p>
+
+<blockquote>
+  <p>对Buffer进行截取</p>
+  
+  <ul><li>start：开始位置</li>
+  <li>end：结束位置，默认: buf.length</li>
+  <li>返回值：新的Buffer</li>
+  </ul>
+  
+  <p>负索引值是相对于buf 的末尾</p>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">var</span> buff = <span class="hljs-keyword">new</span> Buffer([<span class="hljs-number">0x16</span>,<span class="hljs-number">0x17</span>]);
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>buff = buff.slice(<span class="hljs-number">0</span>,<span class="hljs-number">1</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-built_in">console</span>.log(buff);
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><span class="hljs-keyword">var</span> buf = <span class="hljs-keyword">new</span> Buffer([<span class="hljs-number">0x16</span>,<span class="hljs-number">0x17</span>,<span class="hljs-number">0x18</span>]);
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span><span class="hljs-comment">//--&gt; 负索引值是相对于buf的末尾,相当于buf长度+负索引值  &lt;=&gt;buff1.slice(2,3)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>buf = buf.slice(<span class="hljs-number">-1</span>,<span class="hljs-number">3</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-built_in">console</span>.log(buf);
+</div></code></pre>
+
+
+
+<h3 id="copy">copy</h3>
+
+<p>语法：<strong><code>buf.copy(target[, targetStart[, sourceStart[, sourceEnd]]])</code> </strong></p>
+
+<blockquote>
+  <p>拷贝 <code>buf 的指定位置</code>数据到<code>目标but 的指定位置</code></p>
+  
+  <ul><li>target 要拷贝进的 Buffer</li>
+  <li>targetStart  target 中开始拷贝进的索引， 默认为0</li>
+  <li>sourceStart  buf 中开始拷贝的索引，当 targetStart 为 undefined 时忽略，默认为 0</li>
+  <li>sourceEnd  buf 中结束拷贝的索引，当  sourceStart 为 undefined 时忽略， 默认为buf.length</li>
+  <li>返回值:  被拷贝的字节数</li>
+  </ul>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">var</span> b = <span class="hljs-keyword">new</span> Buffer(<span class="hljs-number">12</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">var</span> buff1 = <span class="hljs-keyword">new</span> Buffer(<span class="hljs-string">"珠峰"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span><span class="hljs-keyword">var</span> buff2 = <span class="hljs-keyword">new</span> Buffer(<span class="hljs-string">"培训"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span><span class="hljs-comment">//--&gt;后面两个参数省略不写，默认是全部拷贝</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>buff1.copy(b,<span class="hljs-number">0</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>buff2.copy(b,buff1.length,<span class="hljs-number">0</span>,buff2.length);
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span><span class="hljs-comment">//--&gt;toString可以将buffer转换为字符串</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span><span class="hljs-built_in">console</span>.log(b.toString());
+</div></code></pre>
+
+
+
+<h3 id="concat">concat</h3>
+
+<p>语法：<strong><code>Buffer.concat(list[, totalLength])</code></strong></p>
+
+<blockquote>
+  <p>合并Buffer</p>
+  
+  <ul><li>list 要合并的 Buffer</li>
+  <li>totalLength 合并时 list 中 Buffer 实例的总长度</li>
+  <li>返回值 Buffer</li>
+  </ul>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span><span class="hljs-keyword">var</span> buff1 = <span class="hljs-keyword">new</span> Buffer(<span class="hljs-string">"珠峰"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span><span class="hljs-keyword">var</span> buff2 = <span class="hljs-keyword">new</span> Buffer(<span class="hljs-string">"培训"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span><span class="hljs-built_in">console</span>.log(Buffer.concat([buff1,buff2]).toString());
+</div></code></pre>
+
+<blockquote>
+  <p>自己实现concat方法</p>
+</blockquote>
+
+
+
+<pre class="prettyprint with-line-number hljs-dark"><code class="language-javascript hljs"><div class="hljs-line"><span class="hljs-comment line-number">1.</span>Buffer.myConcat = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">list, totalLength</span>) </span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">2.</span>    <span class="hljs-comment">// 1.先判断totalLength是否传递，如果传递用传的,没传递自己循环数组算一个总长</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">3.</span>    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">typeof</span> totalLength === <span class="hljs-string">'undefined'</span>) {
+</div><div class="hljs-line"><span class="hljs-comment line-number">4.</span>        totalLength = list.reduce(<span class="hljs-function">(<span class="hljs-params">prev,next</span>)=&gt;</span> prev + next.length,<span class="hljs-number">0</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">5.</span>    }
+</div><div class="hljs-line"><span class="hljs-comment line-number">6.</span>    <span class="hljs-comment">// 2.创建一个大buffer，将每一个小buffer拷贝到大buffer中</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">7.</span>    <span class="hljs-keyword">var</span> buffer = <span class="hljs-keyword">new</span> Buffer(totalLength);
+</div><div class="hljs-line"><span class="hljs-comment line-number">8.</span>    <span class="hljs-keyword">var</span> start = <span class="hljs-number">0</span>;
+</div><div class="hljs-line"><span class="hljs-comment line-number">9.</span>    list.forEach(<span class="hljs-function"><span class="hljs-params">buff</span>=&gt;</span>{
+</div><div class="hljs-line"><span class="hljs-comment line-number">10.</span>        buff.copy(buffer,start);
+</div><div class="hljs-line"><span class="hljs-comment line-number">11.</span>        start += buff.length;
+</div><div class="hljs-line"><span class="hljs-comment line-number">12.</span>    });
+</div><div class="hljs-line"><span class="hljs-comment line-number">13.</span>    <span class="hljs-comment">//3.截取有效长度 (防止第二个参数传的过大，导致数据有问题，截取到list长度即可)</span>
+</div><div class="hljs-line"><span class="hljs-comment line-number">14.</span>    <span class="hljs-keyword">return</span> buffer.slice(<span class="hljs-number">0</span>,start);
+</div><div class="hljs-line"><span class="hljs-comment line-number">15.</span>}
+</div><div class="hljs-line"><span class="hljs-comment line-number">16.</span><span class="hljs-keyword">var</span> buff1 = <span class="hljs-keyword">new</span> Buffer(<span class="hljs-string">"珠峰"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">17.</span><span class="hljs-keyword">var</span> buff2 = <span class="hljs-keyword">new</span> Buffer(<span class="hljs-string">"培训"</span>);
+</div><div class="hljs-line"><span class="hljs-comment line-number">18.</span><span class="hljs-built_in">console</span>.log(Buffer.myConcat([buff1,buff2],<span class="hljs-number">2000</span>).toString());
+</div></code></pre></div></body></html>
