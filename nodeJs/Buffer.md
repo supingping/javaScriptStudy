@@ -109,8 +109,8 @@ console.log(b.toString());
 >- 返回值 Buffer
 
 ```javascript
-var buff1 = new Buffer("珠峰");
-var buff2 = new Buffer("培训");
+var buff1 = new Buffer("萍");
+var buff2 = new Buffer("萍");
 
 console.log(Buffer.concat([buff1,buff2]).toString());
 ``` 
@@ -132,8 +132,8 @@ Buffer.myConcat = function (list, totalLength) {
     //3.截取有效长度 (防止第二个参数传的过大，导致数据有问题，截取到list长度即可)
     return buffer.slice(0,start);
 }
-var buff1 = new Buffer("珠峰");
-var buff2 = new Buffer("培训");
+var buff1 = new Buffer("萍");
+var buff2 = new Buffer("萍");
 console.log(Buffer.myConcat([buff1,buff2],2000).toString());
 ```
 
